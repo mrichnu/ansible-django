@@ -1,0 +1,10 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  user: root
+
+  tasks:
+    - name: Clone project repo
+      git: repo={{ project_repo }} dest=/srv/{{ project_name }} accept_hostkey=yes

@@ -1,0 +1,9 @@
+---
+# a unix path-friendly name (IE, no spaces or special characters)
+project_name: django_hello
+
+# the git repository URL for the project
+project_repo: git@github.com:technivore/django-hello-world.git
+    
+# a private key that has access to the repository URL
+ssh_private_key: ~/.ssh/id_rsa

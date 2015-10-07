@@ -1,0 +1,26 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  user: root
+  tasks:
+    - name: Update apt cache
+      apt: update-cache=yes
+
+    - name: Install system packages
+      apt: pkg={{ item }}
+      with_items:
+      - git
+      - nginx
+      - postgresql
+      - gunicorn
+
+    - name: Save ssh key to server
+      copy: src={{ ssh_private_key }} dest=/root/.ssh/id_rsa mode=600
+
+    - name: Create directory for app
+      file: path=/srv/{{ project_name }} state=directory
+
+- include: deploy.yml
+
+# vim:ft=ansible:
