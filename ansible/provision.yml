@@ -2,24 +2,35 @@
 - hosts: servers
   vars_files:
     - vars.yml
+  gather_facts: false
   user: root
+
   tasks:
     - name: Update apt cache
       apt: update-cache=yes
 
     - name: Install system packages
       apt: pkg={{ item }}
-      with_items:
-      - git
-      - nginx
-      - postgresql
-      - gunicorn
+      with_items: "{{ system_packages }}"
 
     - name: Save ssh key to server
       copy: src={{ ssh_private_key }} dest=/root/.ssh/id_rsa mode=600
 
     - name: Create directory for app
-      file: path=/srv/{{ project_name }} state=directory
+      file: path={{ install_root }}/{{ project_name }} state=directory
+
+    - name: make sure postgresql server is running
+      service: name=postgresql state=started
+
+    - name: create database
+      sudo: yes
+      sudo_user: postgres
+      postgresql_db: name={{ db_name }}
+
+    - name: create database user
+      sudo: yes
+      sudo_user: postgres
+      postgresql_user: db={{ db_name }} name={{ db_user }} password={{ db_password }} priv=ALL
 
 - include: deploy.yml
 
