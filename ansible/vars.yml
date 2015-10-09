@@ -64,9 +64,10 @@ system_packages:
   - git
   - nginx
   - gunicorn
-  - python-pip
-  - python-dev
   - postgresql
   - postgresql-server-dev-all
+  - python-pip
+  - python-dev
+  - python-psycopg2
 
 # vim:ft=ansible:
