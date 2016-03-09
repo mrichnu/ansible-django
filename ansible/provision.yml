@@ -3,14 +3,11 @@
   vars_files:
     - vars.yml
   gather_facts: false
-  user: root
+  become: yes
 
   tasks:
-    - name: Update apt cache
-      apt: update-cache=yes
-
     - name: Install system packages
-      apt: pkg={{ item }}
+      apt: pkg={{ item }} update-cache=yes
       with_items: "{{ system_packages }}"
 
     - name: Save ssh key to server
@@ -23,14 +20,15 @@
       service: name=postgresql state=started
 
     - name: create database
-      sudo: yes
-      sudo_user: postgres
+      become_user: postgres
       postgresql_db: name={{ db_name }}
 
     - name: create database user
-      sudo: yes
-      sudo_user: postgres
+      become_user: postgres
       postgresql_user: db={{ db_name }} name={{ db_user }} password={{ db_password }} priv=ALL
+
+    - name: remove default nginx site
+      file: path=/etc/nginx/sites-enabled/default state=absent
 
 - include: deploy.yml
 

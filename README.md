@@ -8,19 +8,20 @@ django project and deploy new versions of the project.
 ### Assumptions
 
 This playbook assumes you have created an Ubuntu 14.04 server and have already
-set up ssh public key authentication on it. You can easily set up public key
-authentication on your server with this command:
-
-`ssh-copy-id root@xxx.xxx.xxx.xxx`
+set up ssh public key authentication on it. Assuming you have provisioned a
+server from a cloud provider such as AWS or Digital Ocean, you should have
+downloaded the private key when generating the server, or specified a keypair
+whose private key you already have saved.
 
 It also assumes you are cool with Postgresql as your database.
 
 ### How to use
 
-- Install ansible 1.9.3 or greater on your computer.
+- Install ansible on your computer (`sudo pip install ansible` should do the
+  trick).
 - Clone this project.
 - Edit the `ansible/hosts` file and enter the IP address of the server you are
-	deploying to.
+	deploying to and edit the path to the private key file.
 - Edit the `ansible/vars.yml` file and enter values appropriate for your project.
 - Run the playbook:
 

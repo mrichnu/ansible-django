@@ -3,20 +3,23 @@
   vars_files:
     - vars.yml
   gather_facts: false
-  user: root
+  become: yes
 
   tasks:
     - name: Clone/pull project repo
       git: repo={{ project_repo }} dest={{ install_root }}/{{ project_name }} accept_hostkey=yes
-      notify: restart gunicorn
+      notify:
+      - restart gunicorn
 
     - name: install python packages
       pip: requirements={{ install_root }}/{{ project_name }}/requirements.txt
-      notify: restart gunicorn
+      notify:
+      - restart gunicorn
 
     - name: copy nginx config
       template: src=files/nginx.j2 dest=/etc/nginx/sites-enabled/{{ project_name }}.conf
-      notify: restart nginx
+      notify:
+      - restart nginx
 
     - name: django migrate
       django_manage: command=migrate app_path={{ install_root }}/{{ project_name }} pythonpath={{ pythonpath }}
@@ -26,15 +29,19 @@
 
     - name: copy gunicorn config
       template: src=files/gunicorn.j2 dest=/etc/init/gunicorn.conf
-      notify: restart gunicorn
-
-    - name: make sure gunicorn server is running
-      service: name=gunicorn state=started enabled=yes
+      notify:
+      - restart gunicorn
 
     - name: make sure nginx server is running
       service: name=nginx state=started enabled=yes
 
+    - name: make sure gunicorn server is running
+      service: name=gunicorn state=started enabled=yes
+
   handlers: 
-    - include: handlers.yml
-      
+    - name: restart nginx
+      service: name=nginx state=restarted
+
+    - name: restart gunicorn
+      service: name=gunicorn state=restarted
 # vim:ft=ansible:
